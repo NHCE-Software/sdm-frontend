@@ -56,7 +56,7 @@
       <td class="border p-3 w-[10px]">❌</td>
       <td class="border p-3 max-w-[20px]">12312313, 123412445, 1231512344,</td>
       <td class="border p-3 w-[10px]">{student.gender}</td>
-      <td class="border p-3 w-9">{dayjs(new Date()).format("DD/MM/YYYY")}</td>
+      <td class="border p-3 w-9">{dayjs(student.dob).format("DD/MM/YYYY")}</td>
       <td class="border p-3 w-[10px]">
         <div class="flex items-center justify-center">
           <!-- svelte-ignore a11y-label-has-associated-control -->
