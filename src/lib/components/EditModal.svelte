@@ -1,11 +1,9 @@
 <script>
-  import dayjs from "dayjs";
-
   import { editingModalOpen, nowEditing } from "../store/store";
   import Input from "./Input.svelte";
   import Options from "./Options.svelte";
   export let updateData = (id) => {};
-  let mode = "relation";
+  let mode = "docs";
 </script>
 
 <!-- Put this part before </body> tag -->
@@ -45,6 +43,12 @@
             class={`tab ${mode === "grade" ? "tab-active" : ""}`}
           >
             Grade
+          </div>
+          <div
+            on:click={() => (mode = "docs")}
+            class={`tab ${mode === "docs" ? "tab-active" : ""}`}
+          >
+            Documents
           </div>
         </div>
       </div>
@@ -203,6 +207,74 @@
               />
             </svg>
           </div>
+        </div>
+      {/if}
+      {#if mode === "grade"}
+        <div class="py-3 grid grid-cols-3 gap-3">
+            <Input
+                header="College Name"
+                bind:value={$nowEditing.grade.collName12}
+            />
+            <Input
+              header="Board"
+              bind:value={$nowEditing.grade.board12}
+            />
+            <Input
+              header="State"
+              bind:value={$nowEditing.grade.state12}
+            />
+            <Input
+              header="Year of Passing"
+              bind:value={$nowEditing.grade.yearofpassing12}
+            />
+            <Input
+            header="PCM percentage"
+            bind:value={$nowEditing.grade.pcmpercent}
+          />
+          <Input
+          header="PCM Aggregate"
+          bind:value={$nowEditing.grade.pcmagg}
+        />
+        <Input
+        header="Reg number"
+        bind:value={$nowEditing.grade.regno}
+        />
+      
+
+      
+
+        </div>
+        <div class="divider">Marks Information</div>
+        <div class="grid grid-cols-3 gap-3">
+          <Input
+          header="Maths "
+          bind:value={$nowEditing.grade.marks.maths}
+              />
+              <Input
+          header="physics"
+          bind:value={$nowEditing.grade.marks.physics}
+              />
+              <Input
+          header="Chemistry"
+          bind:value={$nowEditing.grade.marks.chemistry}
+              />
+              <Input
+          header="Computers"
+          bind:value={$nowEditing.grade.marks.computer}
+              />
+              <Input
+          header="Biology"
+          bind:value={$nowEditing.grade.marks.bio}
+              />
+              <Input
+          header="Electronics"
+          bind:value={$nowEditing.grade.marks.electronics}
+              />
+        </div>
+      {/if}
+      {#if mode === "docs"}
+        <div class="py-3">
+Documents
         </div>
       {/if}
       <button
