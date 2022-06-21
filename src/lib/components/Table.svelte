@@ -49,7 +49,7 @@
           />
         </div>
       </td>
-      <td class="border p-3 w-1/6">{student.name}</td>
+      <td class="border p-3 w-1/6">{student.name} </td>
       <td class="border p-3 w-1/12 max-w-[10px]">{student.branch} </td>
       <td class="border p-3 w-9">{student.stream}</td>
 

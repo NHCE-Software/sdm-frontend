@@ -21,6 +21,7 @@
       caste: "Caste",
       phonenumber: "9191919191",
       emailid: "sachin@gmail.com",
+      studentPic: "https://joeschmoe.io/api/v1/random",
       internal: {
         bsno: "69",
         enqno: "69",
