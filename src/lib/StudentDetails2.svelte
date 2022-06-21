@@ -85,13 +85,13 @@
       docs: [
         {
           docname: "Admission Form",
-          docstatus: "Pending",
-          docduedate: "01/01/2000",
+          docothername: "othername",
+          doclink: "http://www.africau.edu/images/default/sample.pdf",
         },
         {
           docname: "TC",
-          docstatus: "Pending",
-          docduedate: "01/01/2000",
+          docothername: "othername",
+          doclink: "http://www.africau.edu/images/default/sample.pdf",
         },
       ],
     },
@@ -101,6 +101,7 @@
       if (item.sid === sid) return $nowEditing;
       else return item;
     });
+    data = [...data];
   };
 </script>
 

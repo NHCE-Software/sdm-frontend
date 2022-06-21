@@ -1,9 +1,14 @@
 <script>
+  // TODO:
+  // - Change file
+
   import { editingModalOpen, nowEditing } from "../store/store";
   import Input from "./Input.svelte";
   import Options from "./Options.svelte";
   export let updateData = (id) => {};
   let mode = "docs";
+  let doctypes = ["10th", "12th", "TC", "MIG"];
+  let tempoptions = [...doctypes, "Others"];
 </script>
 
 <!-- Put this part before </body> tag -->
@@ -15,7 +20,7 @@
 />
 {#if $nowEditing}
   <div class="modal">
-    <div class="modal-box relative max-w-5xl">
+    <div class="modal-box relative flex flex-col max-w-5xl h-5/6">
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label
         on:click={() => {
@@ -211,70 +216,110 @@
       {/if}
       {#if mode === "grade"}
         <div class="py-3 grid grid-cols-3 gap-3">
-            <Input
-                header="College Name"
-                bind:value={$nowEditing.grade.collName12}
-            />
-            <Input
-              header="Board"
-              bind:value={$nowEditing.grade.board12}
-            />
-            <Input
-              header="State"
-              bind:value={$nowEditing.grade.state12}
-            />
-            <Input
-              header="Year of Passing"
-              bind:value={$nowEditing.grade.yearofpassing12}
-            />
-            <Input
+          <Input
+            header="College Name"
+            bind:value={$nowEditing.grade.collName12}
+          />
+          <Input header="Board" bind:value={$nowEditing.grade.board12} />
+          <Input header="State" bind:value={$nowEditing.grade.state12} />
+          <Input
+            header="Year of Passing"
+            bind:value={$nowEditing.grade.yearofpassing12}
+          />
+          <Input
             header="PCM percentage"
             bind:value={$nowEditing.grade.pcmpercent}
           />
-          <Input
-          header="PCM Aggregate"
-          bind:value={$nowEditing.grade.pcmagg}
-        />
-        <Input
-        header="Reg number"
-        bind:value={$nowEditing.grade.regno}
-        />
-      
-
-      
-
+          <Input header="PCM Aggregate" bind:value={$nowEditing.grade.pcmagg} />
+          <Input header="Reg number" bind:value={$nowEditing.grade.regno} />
         </div>
         <div class="divider">Marks Information</div>
         <div class="grid grid-cols-3 gap-3">
+          <Input header="Maths " bind:value={$nowEditing.grade.marks.maths} />
           <Input
-          header="Maths "
-          bind:value={$nowEditing.grade.marks.maths}
-              />
-              <Input
-          header="physics"
-          bind:value={$nowEditing.grade.marks.physics}
-              />
-              <Input
-          header="Chemistry"
-          bind:value={$nowEditing.grade.marks.chemistry}
-              />
-              <Input
-          header="Computers"
-          bind:value={$nowEditing.grade.marks.computer}
-              />
-              <Input
-          header="Biology"
-          bind:value={$nowEditing.grade.marks.bio}
-              />
-              <Input
-          header="Electronics"
-          bind:value={$nowEditing.grade.marks.electronics}
-              />
+            header="physics"
+            bind:value={$nowEditing.grade.marks.physics}
+          />
+          <Input
+            header="Chemistry"
+            bind:value={$nowEditing.grade.marks.chemistry}
+          />
+          <Input
+            header="Computers"
+            bind:value={$nowEditing.grade.marks.computer}
+          />
+          <Input header="Biology" bind:value={$nowEditing.grade.marks.bio} />
+          <Input
+            header="Electronics"
+            bind:value={$nowEditing.grade.marks.electronics}
+          />
         </div>
       {/if}
       {#if mode === "docs"}
         <div class="py-3">
-Documents
+          <div class=" gap-3 grid grid-cols-3">
+            {#each $nowEditing.docs as d, index}
+              <div class="p-3 border flex flex-col rounded-2xl">
+                <div class="text-xl font-bold mb-4">Document {index + 1}</div>
+                <Options
+                  header="Document Type"
+                  options={tempoptions}
+                  bind:value={d.docname}
+                />
+                <div class="mt-3">
+                  {#if d.docname === "Others"}
+                    <Input header="Document Name" bind:value={d.docothername} />
+                  {/if}
+                </div>
+                <div
+                  on:click={() => {
+                    window.open(d.doclink, "_blank");
+                  }}
+                  class="mt-4 border text-center truncate hover:bg-purple-100 hover:text-purple-600 cursor-pointer rounded-xl p-3"
+                >
+                  📂 {d.doclink.substr(d.doclink.lastIndexOf("/") + 1)}
+                </div>
+                <div
+                  class="flex gap-3 mt-auto pt-4 items-center justify-between "
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  <svg
+                    on:click={() => {
+                      if (confirm("Are you sure you want to delete this?")) {
+                        $nowEditing.docs.splice(index, 1);
+                        $nowEditing = { ...$nowEditing };
+                      }
+                    }}
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </div>
+              </div>
+            {/each}
+          </div>
         </div>
       {/if}
       <button
@@ -282,7 +327,7 @@ Documents
           // server call
           updateData($nowEditing.sid);
         }}
-        class="btn mt-5 w-full"
+        class="btn mt-auto w-full "
       >
         Save</button
       >

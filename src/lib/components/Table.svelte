@@ -4,6 +4,7 @@
   export let data = [];
   $: {
     console.log($nowEditing);
+    console.log($nowEditing.docs.find((item) => item.docname === "10th"));
   }
 </script>
 
@@ -49,7 +50,9 @@
       <td class="border p-3 w-1/12 max-w-[10px]">{student.branch} </td>
       <td class="border p-3 w-9">{student.stream}</td>
 
-      <td class="border p-3 w-[10px]">✅</td>
+      <td class="border p-3 w-[10px]">
+        {student.docs.find((item) => item.docname === "10th") ? "✅" : "❌"}
+      </td>
       <td class="border p-3 w-[10px]">✅</td>
       <td class="border p-3 w-[10px]">69</td>
       <td class="border p-3 w-[10px]">✅</td>
