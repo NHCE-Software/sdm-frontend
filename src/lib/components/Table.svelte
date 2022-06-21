@@ -1,10 +1,13 @@
 <script>
   import dayjs from "dayjs";
+
   import { editingModalOpen, nowEditing, selectedIDs } from "../store/store";
   export let data = [];
   $: {
-    console.log($nowEditing);
-    console.log($nowEditing.docs.find((item) => item.docname === "10th"));
+    if ($nowEditing) {
+      console.log($nowEditing);
+      console.log($nowEditing.docs.find((item) => item.docname === "10th"));
+    }
   }
 </script>
 
@@ -16,7 +19,7 @@
     <th class="p-3 font-bold capitalize text-left">Stream</th>
     <th class="p-3 font-bold capitalize text-left">10th</th>
     <th class="p-3 font-bold capitalize text-left">12th</th>
-    <th class="p-3 font-bold capitalize text-left">Agg</th>
+    <th class="p-3 font-bold capitalize text-left">PCM Agg</th>
     <th class="p-3 font-bold capitalize text-left">TC</th>
     <th class="p-3 font-bold capitalize text-left">MIG</th>
     <th class="p-3 font-bold capitalize text-left">Contact</th>
@@ -53,11 +56,26 @@
       <td class="border p-3 w-[10px]">
         {student.docs.find((item) => item.docname === "10th") ? "✅" : "❌"}
       </td>
-      <td class="border p-3 w-[10px]">✅</td>
-      <td class="border p-3 w-[10px]">69</td>
-      <td class="border p-3 w-[10px]">✅</td>
-      <td class="border p-3 w-[10px]">❌</td>
-      <td class="border p-3 max-w-[20px]">12312313, 123412445, 1231512344,</td>
+      <td class="border p-3 w-[10px]">
+        {student.docs.find((item) => item.docname === "12th") ? "✅" : "❌"}
+      </td>
+
+      <td class="border p-3 w-[10px]">{student.grade.pcmagg}</td>
+      <td class="border p-3 w-[10px]">
+        {student.docs.find((item) => item.docname === "TC") ? "✅" : "❌"}
+      </td>
+      <td class="border p-3 w-[10px]">
+        {student.docs.find((item) => item.docname === "MIG") ? "✅" : "❌"}
+      </td>
+
+      <td class="border p-3 max-w-[20px]"
+        >{[
+          `${student.phonenumber}(Student) `,
+          ...student.relations.map(
+            (item) => `${item.phonenumber}(${item.relationType}) `
+          ),
+        ]}</td
+      >
       <td class="border p-3 w-[10px]">{student.gender}</td>
       <td class="border p-3 w-9">{dayjs(student.dob).format("DD/MM/YYYY")}</td>
       <td class="border p-3 w-[10px]">
