@@ -21,7 +21,7 @@
       caste: "Caste",
       phonenumber: "9191919191",
       emailid: "sachin@gmail.com",
-      studentPic: "https://joeschmoe.io/api/v1/random",
+      studentpic: "https://api.lorem.space/image/face?hash=92310",
       internal: {
         bsno: "69",
         enqno: "69",

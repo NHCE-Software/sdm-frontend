@@ -49,7 +49,14 @@
           />
         </div>
       </td>
-      <td class="border p-3 w-1/6">{student.name} </td>
+      <td class="border p-3 w-1/6">
+        <div class="avatar flex items-center gap-5">
+          <div class="w-10 rounded-full">
+            <img alt="dp" src={student.studentpic} />
+          </div>
+          {student.name}
+        </div>
+      </td>
       <td class="border p-3 w-1/12 max-w-[10px]">{student.branch} </td>
       <td class="border p-3 w-9">{student.stream}</td>
 
