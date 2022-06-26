@@ -22,6 +22,7 @@
       phonenumber: "9191919191",
       emailid: "sachin@gmail.com",
       studentpic: "https://api.lorem.space/image/face?hash=92310",
+      remarks: "",
       internal: {
         bsno: "69",
         enqno: "69",
@@ -74,6 +75,7 @@
         modeofcal: "Percentage",
         overallpercent: "80",
         regno: "12345",
+        qualipassed: "",
         marks: {
           maths: "80",
           physics: "80",
@@ -83,6 +85,7 @@
           bio: "80",
         },
       },
+      docsdue: "",
       docs: [
         {
           docname: "Admission Form",

@@ -19,6 +19,7 @@
     "vite": "^2.9.9"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "daisyui": "^2.15.2",
     "danfojs": "^1.1.1",
     "dayjs": "^1.11.3",

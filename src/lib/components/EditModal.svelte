@@ -232,6 +232,10 @@
           />
           <Input header="PCM Aggregate" bind:value={$nowEditing.grade.pcmagg} />
           <Input header="Reg number" bind:value={$nowEditing.grade.regno} />
+          <Input
+            header="Reg number"
+            bind:value={$nowEditing.grade.qualipassed}
+          />
         </div>
         <div class="divider">Marks Information</div>
         <div class="grid grid-cols-3 gap-3">
