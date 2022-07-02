@@ -25,6 +25,7 @@
     "dayjs": "^1.11.3",
     "gridjs": "^5.0.2",
     "gridjs-svelte": "^2.1.1",
+    "read-excel-file": "^5.3.5",
     "svelte-spa-router": "^3.2.0",
     "sweetalert": "^2.1.2",
     "table-resizer": "^1.0.12"
