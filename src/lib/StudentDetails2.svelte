@@ -6,6 +6,7 @@
   import { editingModalOpen, nowEditing } from "./store/store";
   import EditModal from "./components/EditModal.svelte";
   import Input from "./components/Input.svelte";
+  import StudentDetailsModal from "./components/StudentDetailsModal.svelte";
 
   let data = [
     {
@@ -90,6 +91,7 @@
 </script>
 
 <EditModal {updateData} />
+<StudentDetailsModal />
 <section>
   <Navbar />
   <div class="p-5 flex  gap-3 w-full items-center">

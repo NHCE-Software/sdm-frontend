@@ -11,7 +11,6 @@
   let tempoptions = [...doctypes, "Others"];
 </script>
 
-<!-- Put this part before </body> tag -->
 <input
   type="checkbox"
   checked={$editingModalOpen}

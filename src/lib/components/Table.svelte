@@ -1,12 +1,16 @@
 <script>
   import dayjs from "dayjs";
 
-  import { editingModalOpen, nowEditing, selectedIDs } from "../store/store";
+  import {
+    detailsModalOpen,
+    editingModalOpen,
+    nowEditing,
+    selectedIDs,
+  } from "../store/store";
   export let data = [];
   $: {
     if ($nowEditing) {
       console.log($nowEditing);
-      console.log($nowEditing.docs.find((item) => item.docname === "10th"));
     }
   }
 </script>
@@ -51,9 +55,9 @@
       </td>
       <td class="border p-3 w-1/6">
         <div class="avatar flex items-center gap-5">
-          <div class="w-10 rounded-full">
+          <!-- <div class="w-10 rounded-full">
             <img alt="dp" src={student.studentpic} />
-          </div>
+          </div> -->
           {student.name}
         </div>
       </td>
@@ -67,7 +71,7 @@
         {student.docs.find((item) => item.docname === "12th") ? "✅" : "❌"}
       </td>
 
-      <td class="border p-3 w-[10px]">{student.grade.pcmagg}</td>
+      <td class="border p-3 w-[10px]">{student.grade.pcmscore}</td>
       <td class="border p-3 w-[10px]">
         {student.docs.find((item) => item.docname === "TC") ? "✅" : "❌"}
       </td>
@@ -89,6 +93,11 @@
         <div class="flex items-center justify-center">
           <!-- svelte-ignore a11y-label-has-associated-control -->
           <button
+            on:click={() => {
+              console.log("bru");
+              detailsModalOpen.set(true);
+              nowEditing.set(student);
+            }}
             class="hover:bg-purple-100 hover:text-purple-500  p-3 rounded-xl transition-all"
             ><svg
               xmlns="http://www.w3.org/2000/svg"

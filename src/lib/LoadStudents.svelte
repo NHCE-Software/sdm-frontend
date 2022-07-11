@@ -3,6 +3,7 @@
 
   import Navbar from "./components/Navbar.svelte";
   import readXlsxFile from "read-excel-file";
+  import swal from "sweetalert";
 
   let files;
   let currentStep = 0;
@@ -42,9 +43,9 @@
       board12: "",
       state12: "",
       yearofpassing12: "",
-      pcmscore: "80",
-      modeofcal: "Percentage",
-      overallpercentorcgpa: "80",
+      pcmscore: "",
+      modeofcal: "",
+      overallpercentorcgpa: "",
       regno: "",
       qualipassed: "",
       marks: {
@@ -156,22 +157,35 @@
 
   async function processCSV() {
     loading.parsingCSV = true;
-    let data = await readXlsxFile(files[0]);
-    console.log(data);
-    parsedData.columns = data[1];
-    parsedData.data = data.slice(2);
-    console.log(parsedData);
-    loading.parsingCSV = false;
-    //check format
-    if (!checkFormat(parsedData.columns)) {
+    try {
+      let data = await readXlsxFile(files[0]);
+
+      console.log(data);
+      parsedData.columns = data[1];
+      parsedData.data = data.slice(2);
+      console.log(parsedData);
+      loading.parsingCSV = false;
+      //check format
+      if (!checkFormat(parsedData.columns)) {
+        errors.formaterr = true;
+      }
+      //convert to lowercase and remove special chars
+      parsedData.columns = parsedData.columns.map((item) => sanitize(item));
+      // remove nulls
+      parsedData.data = removeEmptyRows(parsedData.data);
+    } catch (e) {
+      console.log(e);
+      loading.parsingCSV = false;
       errors.formaterr = true;
     }
-    //convert to lowercase and remove special chars
-    parsedData.columns = parsedData.columns.map((item) => sanitize(item));
-    // remove nulls
-    parsedData.data = removeEmptyRows(parsedData.data);
   }
   async function formatandupload() {
+    if (parsedData.data.length === 0)
+      return swal(
+        "There is nothing to load",
+        "There are no parsed values from your excel sheet",
+        "warning"
+      );
     for (let index = 0; index < parsedData.data.length; index++) {
       const element = parsedData.data[index];
       let tempdata = { ...dataFormat };
@@ -289,6 +303,7 @@
         ],
       };
       console.log(tempdata);
+      // console.log("this is my first console log in vim");
     }
   }
 
@@ -360,6 +375,15 @@
               href="https://docs.google.com/spreadsheets/d/1YsZMdeV6XSkHc-uC0nP1zDvTrgWF0MG7Vcwich9nTvA/edit?usp=sharing"
               >Click here to open supported format</a
             >
+            <div
+              on:click={() => {
+                files = undefined;
+                errors.formaterr = false;
+              }}
+              class="bg-purple-100 text-purple-500 font-bold hover:bg-purple-200 cursor-pointer px-3 py-2 w-fit rounded-full mt-5 "
+            >
+              Retry
+            </div>
           </div>
         {:else if parsedData.columns.length > 0}
           <div>✅ Data Parsed, Press Submit to continue</div>
