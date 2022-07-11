@@ -1,12 +1,7 @@
 <script>
   import dayjs from "dayjs";
 
-  import {
-    detailsModalOpen,
-    editingModalOpen,
-    nowEditing,
-    selectedIDs,
-  } from "../store/store";
+  import { editingModalOpen, nowEditing, selectedIDs } from "../store/store";
   export let data = [];
   $: {
     if ($nowEditing) {
@@ -92,26 +87,7 @@
       <td class="border p-3 w-[10px]">
         <div class="flex items-center justify-center">
           <!-- svelte-ignore a11y-label-has-associated-control -->
-          <button
-            on:click={() => {
-              console.log("bru");
-              detailsModalOpen.set(true);
-              nowEditing.set(student);
-            }}
-            class="hover:bg-purple-100 hover:text-purple-500  p-3 rounded-xl transition-all"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
+
           <div
             class="dropdown dropdown-end p-3 rounded-xl  hover:bg-purple-100"
           >

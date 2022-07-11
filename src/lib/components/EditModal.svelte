@@ -1,12 +1,9 @@
 <script>
-  // TODO:
-  // - Change file
-
-  import { editingModalOpen, nowEditing } from "../store/store";
+  import { viewOnly, editingModalOpen, nowEditing } from "../store/store";
   import Input from "./Input.svelte";
   import Options from "./Options.svelte";
   export let updateData = (id) => {};
-  let mode = "docs";
+  let mode = "general";
   let doctypes = ["10th", "12th", "TC", "MIG"];
   let tempoptions = [...doctypes, "Others"];
 </script>
@@ -21,14 +18,17 @@
   <div class="modal">
     <div class="modal-box relative flex flex-col max-w-5xl h-5/6">
       <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label
-        on:click={() => {
-          editingModalOpen.set(false);
-        }}
-        class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
-      >
-      <div class="text-lg font-bold flex  items-center">
-        <div>Editing {$nowEditing.name}</div>
+
+      <div class="text-lg font-bold flex  items-center justify-between">
+        <div class="flex items-center gap-3">
+          <label
+            on:click={() => {
+              editingModalOpen.set(false);
+            }}
+            class="btn btn-sm btn-circle ">✕</label
+          >
+          <div>{$viewOnly ? "Editing" : ""} {$nowEditing.name}</div>
+        </div>
         <div class="tabs mx-10">
           <div
             on:click={() => (mode = "general")}
@@ -54,6 +54,21 @@
           >
             Documents
           </div>
+        </div>
+        <div class="flex gap-3 items-center">
+          {#if !$viewOnly}
+            <label for="edit-toggle" class="text-sm text-gray-500"
+              >Edit Mode Disabled</label
+            >
+          {:else}
+            <label for="edit-toggle" class="text-sm ">Edit Mode Enabled</label>
+          {/if}
+          <input
+            id="edit-toggle"
+            type="checkbox"
+            class="toggle toggle-sm"
+            bind:checked={$viewOnly}
+          />
         </div>
       </div>
       {#if mode === "general"}
@@ -346,6 +361,7 @@
         </div>
       {/if}
       <button
+        disabled={!$viewOnly}
         on:click={() => {
           // server call
           updateData($nowEditing.sid);
