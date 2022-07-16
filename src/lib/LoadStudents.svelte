@@ -4,6 +4,7 @@
   import Navbar from "./components/Navbar.svelte";
   import readXlsxFile from "read-excel-file";
   import swal from "sweetalert";
+  import axios from "axios";
 
   let files;
   let currentStep = 0;
@@ -77,6 +78,7 @@
 
   function checkFormat(format) {
     let expectedformat = [
+      "uid",
       "BS#",
       "Branch",
       "Enq. No",
@@ -180,6 +182,7 @@
     }
   }
   async function formatandupload() {
+    let fin = [];
     if (parsedData.data.length === 0)
       return swal(
         "There is nothing to load",
@@ -303,8 +306,12 @@
         ],
       };
       console.log(tempdata);
+      fin.push(tempdata);
       // console.log("this is my first console log in vim");
     }
+    axios.post("http://localhost:5000/store", { data: fin }).then((res) => {
+      console.log(res.data);
+    });
   }
 
   $: {

@@ -1,11 +1,21 @@
 <script>
-  import { viewOnly, editingModalOpen, nowEditing } from "../store/store";
+  import { editMode, editingModalOpen, nowEditing } from "../store/store";
   import Input from "./Input.svelte";
   import Options from "./Options.svelte";
   export let updateData = (id) => {};
-  let mode = "general";
+  let mode = "grade";
   let doctypes = ["10th", "12th", "TC", "MIG"];
   let tempoptions = [...doctypes, "Others"];
+  let temppcmscore;
+  if ($nowEditing) temppcmscore = $nowEditing.grade.pcmscore;
+  $: {
+    if ($nowEditing) {
+      let m = parseInt($nowEditing.grade.marks.maths || "0");
+      let p = parseInt($nowEditing.grade.marks.physics || "0");
+      let c = parseInt($nowEditing.grade.marks.chemistry || "0");
+      temppcmscore = (m + c + p) / 3;
+    }
+  }
 </script>
 
 <input
@@ -27,7 +37,7 @@
             }}
             class="btn btn-sm btn-circle ">✕</label
           >
-          <div>{$viewOnly ? "Editing" : ""} {$nowEditing.name}</div>
+          <div>{$editMode ? "Editing" : ""} {$nowEditing.name}</div>
         </div>
         <div class="tabs mx-10">
           <div
@@ -56,7 +66,7 @@
           </div>
         </div>
         <div class="flex gap-3 items-center">
-          {#if !$viewOnly}
+          {#if !$editMode}
             <label for="edit-toggle" class="text-sm text-gray-500"
               >Edit Mode Disabled</label
             >
@@ -67,7 +77,7 @@
             id="edit-toggle"
             type="checkbox"
             class="toggle toggle-sm"
-            bind:checked={$viewOnly}
+            bind:checked={$editMode}
           />
         </div>
       </div>
@@ -162,20 +172,22 @@
                     }
                   }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
+                  {#if $editMode}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  {/if}
                 </div>
               </div>
               <div class="flex flex-col gap-2">
@@ -196,34 +208,37 @@
               </div>
             </div>
           {/each}
-          <div
-            on:click={() => {
-              $nowEditing.relations.push({
-                name: "",
-                relationType: "",
-                phonenumber: "",
-                landline: "",
-                occupation: "",
-              });
-              $nowEditing = { ...$nowEditing };
-            }}
-            class="bg-purple-50 hover:text-purple-500 hover:bg-purple-100 transition-all delay-100 flex justify-center items-center rounded-2xl"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-16 w-16"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
+          {#if $editMode}
+            <div
+              on:click={() => {
+                $nowEditing.relations.push({
+                  name: "",
+                  relationType: "",
+                  phonenumber: "",
+                  landline: "",
+                  occupation: "",
+                });
+                $nowEditing = { ...$nowEditing };
+              }}
+              class="bg-purple-50 hover:text-purple-500  hover:bg-purple-100 transition-all delay-100 flex justify-center items-center rounded-2xl"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-          </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-16 w-16"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+              <div>Add a relation</div>
+            </div>
+          {/if}
         </div>
       {/if}
       {#if mode === "grade"}
@@ -239,17 +254,21 @@
             bind:value={$nowEditing.grade.yearofpassing12}
           />
           <Input
-            header="PCM percentage"
-            bind:value={$nowEditing.grade.pcmpercent}
+            header="PCM Agg/Percentage"
+            bind:value={$nowEditing.grade.overallpercentorcgpa}
           />
-          <Input header="PCM Aggregate" bind:value={$nowEditing.grade.pcmagg} />
+          <Options
+            header="PCM Mode of Calculation"
+            options={["Percentage", "CGPA"]}
+            bind:value={$nowEditing.grade.modeofcal}
+          />
           <Input header="Reg number" bind:value={$nowEditing.grade.regno} />
           <Input
-            header="Reg number"
+            header="Exams Passed"
             bind:value={$nowEditing.grade.qualipassed}
           />
         </div>
-        <div class="divider">Marks Information</div>
+        <div class="divider">Marks Information (on 100)</div>
         <div class="grid grid-cols-3 gap-3">
           <Input header="Maths " bind:value={$nowEditing.grade.marks.maths} />
           <Input
@@ -270,34 +289,56 @@
             bind:value={$nowEditing.grade.marks.electronics}
           />
         </div>
+
+        <div class="divider mt-5">Calulated score</div>
+        <div class="grid grid-cols-2 mt-5 gap-10 ">
+          <div>
+            Calculated PCM score is an absolute standardized score for all the
+            students on the platform. This score is calculated by averaging
+            their pcm marks.
+          </div>
+          <div
+            class="bg-purple-300 text-purple-600  text-center text-3xl  rounded-2xl p-5"
+          >
+            {temppcmscore.toFixed(2)}
+          </div>
+
+          <div />
+        </div>
       {/if}
       {#if mode === "docs"}
         <div class="py-3">
-          <div class=" gap-3 grid grid-cols-3">
+          <div class="py-5">
+            <Input header="Documents Due" bind:value={$nowEditing.docsdue} />
+          </div>
+          <div class="divider">Document Records</div>
+          <div class=" gap-3 grid grid-cols-3 py-3">
             {#each $nowEditing.docs as d, index}
               <div class="p-3 border flex flex-col rounded-2xl">
                 <div class="flex justify-between">
                   <div class="text-xl font-bold mb-4">Document {index + 1}</div>
-                  <svg
-                    on:click={() => {
-                      if (confirm("Are you sure you want to delete this?")) {
-                        $nowEditing.docs.splice(index, 1);
-                        $nowEditing = { ...$nowEditing };
-                      }
-                    }}
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 hover:text-red-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
+                  {#if $editMode}
+                    <svg
+                      on:click={() => {
+                        if (confirm("Are you sure you want to delete this?")) {
+                          $nowEditing.docs.splice(index, 1);
+                          $nowEditing = { ...$nowEditing };
+                        }
+                      }}
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-6 w-6 hover:text-red-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  {/if}
                 </div>
                 <Options
                   header="Document Type"
@@ -357,11 +398,38 @@
                 </div> -->
               </div>
             {/each}
+            {#if $editMode}
+              <div
+                on:click={() => {
+                  $nowEditing.docs.push({
+                    docname: "",
+                    docothername: "",
+                  });
+                  $nowEditing = { ...$nowEditing };
+                }}
+                class="p-3 flex rounded-2xl hover:bg-purple-300 hover:text-purple-600 font-bold transition-all border justify-center items-center cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-16 w-16"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                <div>Add a Document</div>
+              </div>{/if}
           </div>
         </div>
       {/if}
       <button
-        disabled={!$viewOnly}
+        disabled={!$editMode}
         on:click={() => {
           // server call
           updateData($nowEditing.sid);
