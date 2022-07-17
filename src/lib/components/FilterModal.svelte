@@ -95,5 +95,14 @@
         <RangeSlider all="label" pips bind:values={pmcscorerangeslider} float />
       </div>
     </div>
+    <div class="">
+      <button
+        on:click={() => {
+          // server call
+          filterModalOpen.set(false);
+        }}
+        class="btn">Apply</button
+      >
+    </div>
   </div>
 </div>

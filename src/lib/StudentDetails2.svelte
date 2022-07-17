@@ -98,24 +98,34 @@
   <Navbar />
   <div class="p-5 flex  gap-3 w-full items-center">
     <div class="text-2xl font-bold">Student Details</div>
-    <div class="ml-auto">
-      <div class="flex flex-col gap-1">
-        <div class="flex flex-col flex-1 gap-1">
-          <label class="capitalize text-sm opacity-50" for={"search"}
-            >Search</label
+
+    <div class="form-control ml-auto ">
+      <div class="input-group">
+        <input
+          type="text"
+          placeholder="Search…"
+          class="input input-bordered "
+        />
+        <button class="btn btn-square">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            /></svg
           >
-          <input
-            type="text"
-            class="input capitalize input-bordered"
-            placeholder={"Start typing here"}
-          />
-        </div>
+        </button>
       </div>
     </div>
 
     <div>
-      <div class="flex flex-col gap-1 mx-6">
-        <label for="..">Control Panel</label>
+      <div class="flex flex-col gap-1 ml-6">
         <div class="flex gap-3">
           <div
             data-tip="Download All Data"
@@ -206,6 +216,9 @@
   </div>
 
   <div class="p-5">
+    <div class="text-sm opacity-40">
+      Showing <b>1-25</b> of 8999 data points
+    </div>
     <Table {data} />
   </div>
 </section>
