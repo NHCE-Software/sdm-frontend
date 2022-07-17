@@ -1,11 +1,13 @@
 <script>
   import Table from "./components/Table.svelte";
-  import writeXlsxFile from "write-excel-file";
+  // import writeXlsxFile from "write-excel-file";
 
   // import swal from "sweetalert";
   import Navbar from "./components/Navbar.svelte";
-  import { nowEditing } from "./store/store";
+  import { addModalOpen, filterModalOpen, nowEditing } from "./store/store";
   import EditModal from "./components/EditModal.svelte";
+  import AddModal from "./components/AddModal.svelte";
+  import FilterModal from "./components/FilterModal.svelte";
   let data = [
     {
       sid: "1",
@@ -89,6 +91,8 @@
   };
 </script>
 
+<FilterModal />
+<AddModal />
 <EditModal {updateData} />
 <section>
   <Navbar />
@@ -108,20 +112,14 @@
         </div>
       </div>
     </div>
-    <div>
-      <div class="flex flex-col gap-1">
-        <label for=".."> Filters</label>
-        <div class="bg-purple-200 rounded-full text-purple-500 p-3">
-          No filters applied
-        </div>
-      </div>
-    </div>
+
     <div>
       <div class="flex flex-col gap-1 mx-6">
-        <label for="..">Export data</label>
+        <label for="..">Control Panel</label>
         <div class="flex gap-3">
           <div
-            class="bg-purple-200 rounded-full text-purple-500 p-3 text-center btn outline-none border-none hover:text-white"
+            data-tip="Download All Data"
+            class="tooltip tooltip-bottom bg-purple-200 rounded-full text-purple-500 p-3 text-center btn outline-none border-none hover:text-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +137,8 @@
             </svg>
           </div>
           <div
-            class="bg-purple-200 rounded-full text-purple-500 p-3 text-center btn outline-none border-none hover:text-white"
+            data-tip="Download Selected Data"
+            class="tooltip tooltip-bottom bg-purple-200 rounded-full text-purple-500 p-3 text-center btn outline-none border-none hover:text-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -153,6 +152,51 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
+              />
+            </svg>
+          </div>
+          <div
+            on:click={() => {
+              filterModalOpen.set(true);
+            }}
+            data-tip="Filter"
+            class="tooltip tooltip-bottom bg-purple-200 rounded-full  text-purple-500 p-3 text-center btn outline-none border-none hover:text-white"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+              />
+            </svg>
+          </div>
+          <div
+            on:click={() => {
+              console.log("add");
+              addModalOpen.set(true);
+            }}
+            data-tip="Add Single Lead"
+            class="tooltip tooltip-bottom bg-purple-200 rounded-full px-6 text-purple-500 p-3 text-center btn outline-none border-none hover:text-white"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
             </svg>
           </div>

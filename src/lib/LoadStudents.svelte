@@ -78,7 +78,6 @@
 
   function checkFormat(format) {
     let expectedformat = [
-      "uid",
       "BS#",
       "Branch",
       "Enq. No",

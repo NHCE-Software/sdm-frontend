@@ -2,7 +2,17 @@
   export let type = "text";
   export let header;
   export let value;
-  import { editMode } from "../store/store";
+  import { addModalOpen, editingModalOpen, editMode } from "../store/store";
+  let isDisabled = false;
+  $: {
+    isDisabled = !$editMode
+      ? $addModalOpen
+        ? false
+        : $editingModalOpen
+        ? true
+        : false
+      : false;
+  }
 </script>
 
 {#if type === "date"}
@@ -10,7 +20,7 @@
     <label class="capitalize text-sm opacity-50" for={header}>{header}</label>
 
     <input
-      disabled={!$editMode}
+      disabled={isDisabled}
       id={header}
       bind:value
       type="date"
@@ -23,7 +33,7 @@
     <label class="capitalize text-sm opacity-50" for={header}>{header}</label>
 
     <input
-      disabled={!$editMode}
+      disabled={isDisabled}
       id={header}
       bind:value
       type="email"
@@ -36,7 +46,7 @@
     <label class="capitalize text-sm opacity-50" for={header}>{header}</label>
 
     <textarea
-      disabled={!$editMode}
+      disabled={isDisabled}
       id={header}
       bind:value
       class=" textarea textarea-bordered w-full flex-1"
@@ -48,7 +58,7 @@
     <label class="capitalize text-sm opacity-50" for={header}>{header}</label>
 
     <input
-      disabled={!$editMode}
+      disabled={isDisabled}
       id={header}
       bind:value
       type="text"
