@@ -1,10 +1,18 @@
 <script>
+  import Page from "./components/Page.svelte";
   import Table from "./components/Table.svelte";
   // import writeXlsxFile from "write-excel-file";
-
+  import loadinggif from "../assets/loading.gif";
   // import swal from "sweetalert";
   import Navbar from "./components/Navbar.svelte";
-  import { addModalOpen, filterModalOpen, nowEditing } from "./store/store";
+  import {
+    addModalOpen,
+    currentPage,
+    maxRecordPerPage,
+    maxPage,
+    filterModalOpen,
+    nowEditing,
+  } from "./store/store";
   import EditModal from "./components/EditModal.svelte";
   import AddModal from "./components/AddModal.svelte";
   import FilterModal from "./components/FilterModal.svelte";
@@ -81,7 +89,7 @@
       ],
     },
   ];
-
+  let loading = true;
   let updateData = (sid) => {
     data = data.map((item) => {
       if (item.sid === sid) return $nowEditing;
@@ -89,6 +97,10 @@
     });
     data = [...data];
   };
+  $: {
+    if ($currentPage <= 0) $currentPage = 1;
+    if ($currentPage >= $maxPage) $currentPage = $maxPage;
+  }
 </script>
 
 <FilterModal />
@@ -125,7 +137,7 @@
     </div>
 
     <div>
-      <div class="flex flex-col gap-1 ml-6">
+      <div class="flex flex-col gap-1 mx-6">
         <div class="flex gap-3">
           <div
             data-tip="Download All Data"
@@ -215,10 +227,59 @@
     </div>
   </div>
 
-  <div class="p-5">
-    <div class="text-sm opacity-40">
-      Showing <b>1-25</b> of 8999 data points
+  <div class="p-5 ">
+    <div class="flex text-sm items-center justify-between py-3">
+      <div class="flex gap-3">
+        <form class="flex gap-4 items-center">
+          <div class="form-control">
+            <label class="input-group input-group-sm">
+              <div
+                on:click={() => {
+                  $currentPage -= 1;
+                }}
+                class="btn btn-sm"
+              >
+                -
+              </div>
+              <input
+                bind:value={$currentPage}
+                type="text"
+                class="input input-bordered w-20 text-center  input-sm "
+              />
+              <div
+                on:click={() => {
+                  $currentPage += 1;
+                }}
+                class="btn btn-sm"
+              >
+                +
+              </div>
+            </label>
+          </div>
+          <div class="text-sm opacity-40">
+            Page {$currentPage} ({$maxRecordPerPage} records) of {$maxPage} pages
+          </div>
+        </form>
+      </div>
+      <div class="flex gap-3">
+        <div class="text-sm opacity-40">
+          Total {$maxPage * $maxRecordPerPage} data points
+        </div>
+      </div>
     </div>
-    <Table {data} />
+    {#if loading}
+      <div class="flex flex-col gap-5 justify-center items-center w-full h-96">
+        <img
+          src={loadinggif}
+          class="w-20 h-20 rounded-full
+          "
+          alt=""
+          srcset=""
+        />
+        <div class="animate-pulse">Fetching data please wait...</div>
+      </div>
+    {:else}
+      <Table {data} />
+    {/if}
   </div>
 </section>
