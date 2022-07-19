@@ -18,7 +18,7 @@
     <th class="p-3 font-bold capitalize text-left">Stream</th>
     <th class="p-3 font-bold capitalize text-left">10th</th>
     <th class="p-3 font-bold capitalize text-left">12th</th>
-    <th class="p-3 font-bold capitalize text-left">PCM Agg</th>
+    <th class="p-3 font-bold capitalize text-left">PCM score</th>
     <th class="p-3 font-bold capitalize text-left">TC</th>
     <th class="p-3 font-bold capitalize text-left">MIG</th>
     <th class="p-3 font-bold capitalize text-left">Contact</th>

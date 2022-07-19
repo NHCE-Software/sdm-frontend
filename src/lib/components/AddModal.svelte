@@ -54,7 +54,7 @@
     docsdue: "",
     relations: [],
   };
-  let mode = "grade";
+  let mode = "general";
   let doctypes = ["10th", "12th", "TC", "MIG"];
   let tempoptions = [...doctypes, "Others"];
   let temppcmscore = 0.0;
@@ -383,3 +383,17 @@
     >
   </div>
 </div>
+
+<style>
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-purple-200;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-purple-500;
+  }
+</style>

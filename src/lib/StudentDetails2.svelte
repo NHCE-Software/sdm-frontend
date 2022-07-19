@@ -1,9 +1,6 @@
 <script>
-  import Page from "./components/Page.svelte";
   import Table from "./components/Table.svelte";
-  // import writeXlsxFile from "write-excel-file";
   import loadinggif from "../assets/loading.gif";
-  // import swal from "sweetalert";
   import Navbar from "./components/Navbar.svelte";
   import {
     addModalOpen,
@@ -12,10 +9,69 @@
     maxPage,
     filterModalOpen,
     nowEditing,
+    baseurl,
   } from "./store/store";
   import EditModal from "./components/EditModal.svelte";
   import AddModal from "./components/AddModal.svelte";
   import FilterModal from "./components/FilterModal.svelte";
+  import { onMount } from "svelte";
+  import axios from "axios";
+
+  async function fetchdata(mode) {
+    if (mode === "filter") {
+      // do not check for pages as the pages will change after applying filter
+      // setting the page to 1st page
+      $currentPage = 1;
+    } else {
+      //
+      if ($currentPage <= 0) {
+        $currentPage = 1;
+        return;
+      }
+
+      if ($currentPage >= $maxPage) {
+        $currentPage = $maxPage;
+        return;
+      }
+    }
+
+    console.log("fetching data");
+
+    loading = true;
+    console.log($currentPage, $maxRecordPerPage);
+    let newfilter = {
+      stream: filters.stream ? filters.stream : undefined,
+      branch: filters.branch ? filters.branch : undefined,
+      docs: { ...filters.docs },
+    };
+    const body = {
+      query: `query Query($record: JSON) {
+          getStudents(record: $record)
+      }`,
+      variables: {
+        record: {
+          page: $currentPage,
+          limit: $maxRecordPerPage,
+          filter: newfilter,
+        },
+      },
+    };
+    const res = await axios.post($baseurl, body);
+    console.log(res.data);
+    $maxPage = res.data.data.getStudents.totalpages;
+    datapoints = res.data.data.getStudents.totalrecords;
+    data = res.data.data.getStudents.students;
+    data = data.map((item) => {
+      item.sid = item._id;
+      return item;
+    });
+    console.log(data[0]);
+    loading = false;
+  }
+  onMount(async () => {
+    await fetchdata();
+  });
+
   let data = [
     {
       sid: "1",
@@ -89,7 +145,9 @@
       ],
     },
   ];
-  let loading = true;
+  let loading = false;
+  let filters = { docs: {}, stream: "", branch: "" };
+  let datapoints = 0;
   let updateData = (sid) => {
     data = data.map((item) => {
       if (item.sid === sid) return $nowEditing;
@@ -97,13 +155,9 @@
     });
     data = [...data];
   };
-  $: {
-    if ($currentPage <= 0) $currentPage = 1;
-    if ($currentPage >= $maxPage) $currentPage = $maxPage;
-  }
 </script>
 
-<FilterModal />
+<FilterModal bind:filters {fetchdata} />
 <AddModal />
 <EditModal {updateData} />
 <section>
@@ -236,6 +290,7 @@
               <div
                 on:click={() => {
                   $currentPage -= 1;
+                  fetchdata();
                 }}
                 class="btn btn-sm"
               >
@@ -249,6 +304,7 @@
               <div
                 on:click={() => {
                   $currentPage += 1;
+                  fetchdata();
                 }}
                 class="btn btn-sm"
               >
@@ -263,12 +319,14 @@
       </div>
       <div class="flex gap-3">
         <div class="text-sm opacity-40">
-          Total {$maxPage * $maxRecordPerPage} data points
+          Displaying <b>{data.length}</b> of Total <b>{datapoints}</b> data points
         </div>
       </div>
     </div>
     {#if loading}
-      <div class="flex flex-col gap-5 justify-center items-center w-full h-96">
+      <div
+        class="flex animate-bounce flex-col gap-5 justify-center items-center w-full h-96"
+      >
         <img
           src={loadinggif}
           class="w-20 h-20 rounded-full

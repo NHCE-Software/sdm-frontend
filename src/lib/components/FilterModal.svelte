@@ -4,7 +4,8 @@
   import { filterModalOpen } from "../store/store";
   import RangeSlider from "svelte-range-slider-pips";
   import Options from "./Options.svelte";
-  let filters = {
+  export let fetchdata;
+  export let filters = {
     docs: {},
     stream: "",
     branch: "",
@@ -13,8 +14,12 @@
   let streamOptions = ["Why were they open"];
   let boardOptions = ["Why were they open"];
   let branchOptions = ["fire"];
+  let sc1;
+  let sc2;
+  let sc3;
+  let sc4;
   $: {
-    console.log(pmcscorerangeslider);
+    //console.log(pmcscorerangeslider);
     filters.score = {
       ub: Math.max(...pmcscorerangeslider),
       lb: Math.min(...pmcscorerangeslider),
@@ -43,23 +48,27 @@
       <div class="text-lg opacity-50 font-bold">Submitted Documents</div>
       <div class="my-3 grid grid-cols-2 gap-2">
         <SubmissionComponent
+          bind:this={sc1}
           title="10th Marks card"
           bind:filters
           key="markscard10th"
         />
         <SubmissionComponent
+          bind:this={sc2}
           title="12th Marks card"
           bind:filters
           submitted={"markscard12th" in filters.docs}
           key="markscard12th"
         />
         <SubmissionComponent
+          bind:this={sc3}
           title="Transfer Certificate"
           bind:filters
           submitted={"tc" in filters.docs}
           key="tc"
         />
         <SubmissionComponent
+          bind:this={sc4}
           title="Migration Certificate"
           bind:filters
           submitted={"mig" in filters.docs}
@@ -95,10 +104,30 @@
         <RangeSlider all="label" pips bind:values={pmcscorerangeslider} float />
       </div>
     </div>
-    <div class="">
+    <div class=" flex gap-10 ml-auto justify-end">
       <button
         on:click={() => {
-          // server call
+          filters = {
+            stream: "",
+            branch: "",
+            docs: {},
+            score: {
+              ub: 100,
+              lb: 0,
+            },
+          };
+          pmcscorerangeslider = [0, 100];
+          if (sc1) sc1.setfalse();
+          if (sc2) sc2.setfalse();
+          if (sc3) sc3.setfalse();
+          if (sc4) sc4.setfalse();
+        }}
+        class="hover:text-purple-500 transition-all">Clear Filter</button
+      >
+      <button
+        on:click={() => {
+          fetchdata("filter");
+
           filterModalOpen.set(false);
         }}
         class="btn">Apply</button

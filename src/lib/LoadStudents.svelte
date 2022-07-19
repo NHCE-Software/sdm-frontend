@@ -5,6 +5,8 @@
   import readXlsxFile from "read-excel-file";
   import swal from "sweetalert";
   import axios from "axios";
+  import { baseurl } from "./store/store";
+  import dayjs from "dayjs";
 
   let files;
   let currentStep = 0;
@@ -159,7 +161,7 @@
   async function processCSV() {
     loading.parsingCSV = true;
     try {
-      let data = await readXlsxFile(files[0]);
+      let data = await readXlsxFile(files[0], { dateFormat: "mm/dd/yyyy" });
 
       console.log(data);
       parsedData.columns = data[1];
@@ -195,6 +197,8 @@
       parsedData.columns.forEach((key, i) => (ele[key] = element[i]));
       console.log(ele);
       let parseddocs = [];
+      ele.dob = dayjs(ele.dob).format("YYYY-MM-DD");
+      ele.dateofadmission = dayjs(ele.dateofadmission).format("YYYY-MM-DD");
       if (ele.tc === "Submitted") {
         parseddocs.push({
           docname: "TC",
@@ -253,9 +257,15 @@
           collName12: ele["12thcollegename"],
           state12: ele["12thcollegestate"],
           modeofcal: ele.methodofcalculation,
-          pcmagg: "",
-          pcmpercent: "",
-          overallpercent: ele.overallorcgpa,
+          pcmscore: (
+            (parseFloat(ele.mochem || "0") +
+              parseFloat(ele.mophysics || "0") +
+              parseFloat(ele.momath || "0")) /
+            3
+          )
+            .toFixed(2)
+            .toString(),
+          overallpercentorcgpa: ele.overallorcgpa,
           yearofpassing12: ele.yrofpassing,
           regno: ele.regno,
           qualipassed: ele.qlyexampassed,
@@ -304,13 +314,21 @@
           },
         ],
       };
+
       console.log(tempdata);
       fin.push(tempdata);
       // console.log("this is my first console log in vim");
     }
-    axios.post("http://localhost:5000/store", { data: fin }).then((res) => {
-      console.log(res.data);
-    });
+    const body = {
+      query: `mutation AddStudents($record: [JSON]) {
+                addStudents(record: $record)
+              }`,
+      variables: {
+        record: fin,
+      },
+    };
+
+    await axios.post($baseurl, body);
   }
 
   $: {

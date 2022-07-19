@@ -10,3 +10,4 @@ export const filterModalOpen = writable(false);
 export const maxRecordPerPage = writable(25);
 export const currentPage = writable(1);
 export const maxPage = writable(10);
+export const baseurl = writable(import.meta.env.VITE_BASEURL);
