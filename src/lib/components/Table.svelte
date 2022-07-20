@@ -5,7 +5,7 @@
   export let data = [];
   $: {
     if ($nowEditing) {
-      console.log($nowEditing);
+      //console.log($nowEditing);
     }
   }
 </script>
@@ -114,7 +114,7 @@
             >
               <li
                 on:click={() => {
-                  console.log("edit");
+                  //console.log("edit");
                   editingModalOpen.set(true);
                   nowEditing.set(student);
                 }}

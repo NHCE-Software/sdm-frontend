@@ -34,16 +34,29 @@
         return;
       }
     }
-
-    console.log("fetching data");
-
     loading = true;
-    console.log($currentPage, $maxRecordPerPage);
+    //console.log($currentPage, $maxRecordPerPage);
+
     let newfilter = {
-      stream: filters.stream ? filters.stream : undefined,
-      branch: filters.branch ? filters.branch : undefined,
-      docs: { ...filters.docs },
+      // $and: [],
     };
+    let and = [];
+    for (const dd of Object.keys(filters.docs)) {
+      console.log(dd);
+      and.push({
+        "docs.docname":
+          filters.docs[dd] === "Submitted" ? { $eq: dd } : { $ne: dd },
+      });
+    }
+    if (and.length !== 0) newfilter["$and"] = and;
+    newfilter["grade.pcmscore"] = {
+      $gte: filters.score.lb,
+      $lte: filters.score.ub,
+    };
+    if (filters.board12) newfilter["grade.board12"] = filters.board12;
+    if (filters.branch) newfilter["branch"] = filters.stream;
+    if (filters.stream) newfilter["stream"] = filters.branch;
+    console.log("NEWFILTER  : ", newfilter);
     const body = {
       query: `query Query($record: JSON) {
           getStudents(record: $record)
@@ -57,7 +70,7 @@
       },
     };
     const res = await axios.post($baseurl, body);
-    console.log(res.data);
+    //console.log(res.data);
     $maxPage = res.data.data.getStudents.totalpages;
     datapoints = res.data.data.getStudents.totalrecords;
     data = res.data.data.getStudents.students;
@@ -65,7 +78,7 @@
       item.sid = item._id;
       return item;
     });
-    console.log(data[0]);
+    //console.log(data[0]);
     loading = false;
   }
   onMount(async () => {
@@ -115,7 +128,7 @@
         board12: "CBSE",
         state12: "Bangalore",
         yearofpassing12: "2020",
-        pcmscore: "80", // CALCULATE
+        pcmscore: 80.0, // CALCULATE
         modeofcal: "Percentage",
         overallpercentorcgpa: "80",
         regno: "12345",
@@ -255,7 +268,7 @@
           </div>
           <div
             on:click={() => {
-              console.log("add");
+              //console.log("add");
               addModalOpen.set(true);
             }}
             data-tip="Add Single Lead"

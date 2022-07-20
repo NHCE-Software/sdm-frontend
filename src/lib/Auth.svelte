@@ -1,5 +1,6 @@
 <script>
   import axios from "axios";
+  import swal from "sweetalert";
   import { baseurl } from "./store/store";
   let email;
   let password;
@@ -15,8 +16,16 @@
       },
     };
     const { data } = await axios.post($baseurl, body);
-    console.log(data.data);
-    localStorage.setItem("token", data.data.signIn.token);
+    //console.log(data.data);
+    if (data.data.signIn.token) {
+      localStorage.setItem("token", data.data.signIn.token);
+    } else {
+      swal(
+        "Authentication Error",
+        "Something went wrong. Please try again",
+        "error"
+      );
+    }
   }
 </script>
 

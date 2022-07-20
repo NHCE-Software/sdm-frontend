@@ -10,7 +10,7 @@
     stream: "",
     branch: "",
   };
-  let pmcscorerangeslider = [30, 70];
+  let pmcscorerangeslider = [0, 100];
   let streamOptions = ["Why were they open"];
   let boardOptions = ["Why were they open"];
   let branchOptions = ["fire"];
@@ -19,12 +19,12 @@
   let sc3;
   let sc4;
   $: {
-    //console.log(pmcscorerangeslider);
+    ////console.log(pmcscorerangeslider);
     filters.score = {
       ub: Math.max(...pmcscorerangeslider),
       lb: Math.min(...pmcscorerangeslider),
     };
-    console.log(filters);
+    //console.log(filters);
   }
 </script>
 
@@ -51,28 +51,29 @@
           bind:this={sc1}
           title="10th Marks card"
           bind:filters
-          key="markscard10th"
+          submitted={"10th" in filters.docs}
+          key="10th"
         />
         <SubmissionComponent
           bind:this={sc2}
           title="12th Marks card"
           bind:filters
-          submitted={"markscard12th" in filters.docs}
-          key="markscard12th"
+          submitted={"12th" in filters.docs}
+          key="12th"
         />
         <SubmissionComponent
           bind:this={sc3}
           title="Transfer Certificate"
           bind:filters
-          submitted={"tc" in filters.docs}
-          key="tc"
+          submitted={"TC" in filters.docs}
+          key="TC"
         />
         <SubmissionComponent
           bind:this={sc4}
           title="Migration Certificate"
           bind:filters
-          submitted={"mig" in filters.docs}
-          key="mig"
+          submitted={"MIG" in filters.docs}
+          key="MIG"
         />
       </div>
       <div class="text-lg opacity-50  font-bold">General</div>

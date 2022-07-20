@@ -36,7 +36,7 @@
       board12: "",
       state12: "",
       yearofpassing12: "",
-      pcmscore: "",
+      pcmscore: 0.0,
       modeofcal: "",
       overallpercentorcgpa: "",
       regno: "",
@@ -375,7 +375,7 @@
     <button
       on:click={() => {
         // server call
-        console.log(newData);
+        //console.log(newData);
       }}
       class="btn mt-auto w-full "
     >

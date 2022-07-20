@@ -46,7 +46,7 @@
       board12: "",
       state12: "",
       yearofpassing12: "",
-      pcmscore: "",
+      pcmscore: 0.0,
       modeofcal: "",
       overallpercentorcgpa: "",
       regno: "",
@@ -163,10 +163,10 @@
     try {
       let data = await readXlsxFile(files[0], { dateFormat: "mm/dd/yyyy" });
 
-      console.log(data);
+      //console.log(data);
       parsedData.columns = data[1];
       parsedData.data = data.slice(2);
-      console.log(parsedData);
+      //console.log(parsedData);
       loading.parsingCSV = false;
       //check format
       if (!checkFormat(parsedData.columns)) {
@@ -177,7 +177,7 @@
       // remove nulls
       parsedData.data = removeEmptyRows(parsedData.data);
     } catch (e) {
-      console.log(e);
+      //console.log(e);
       loading.parsingCSV = false;
       errors.formaterr = true;
     }
@@ -195,7 +195,7 @@
       let tempdata = { ...dataFormat };
       let ele = {};
       parsedData.columns.forEach((key, i) => (ele[key] = element[i]));
-      console.log(ele);
+      //console.log(ele);
       let parseddocs = [];
       ele.dob = dayjs(ele.dob).format("YYYY-MM-DD");
       ele.dateofadmission = dayjs(ele.dateofadmission).format("YYYY-MM-DD");
@@ -262,9 +262,7 @@
               parseFloat(ele.mophysics || "0") +
               parseFloat(ele.momath || "0")) /
             3
-          )
-            .toFixed(2)
-            .toString(),
+          ).toFixed(2),
           overallpercentorcgpa: ele.overallorcgpa,
           yearofpassing12: ele.yrofpassing,
           regno: ele.regno,
@@ -315,9 +313,9 @@
         ],
       };
 
-      console.log(tempdata);
+      //console.log(tempdata);
       fin.push(tempdata);
-      // console.log("this is my first console log in vim");
+      // //console.log("this is my first console log in vim");
     }
     const body = {
       query: `mutation AddStudents($record: [JSON]) {
