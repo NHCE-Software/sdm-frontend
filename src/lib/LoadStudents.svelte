@@ -85,7 +85,7 @@
       "Enq. No",
       "Date of admission",
       "Student Name",
-      "Sex",
+      "Gender",
       "Stream",
       "DOB",
       "Caste",
@@ -123,6 +123,7 @@
       "MO-Bio",
       "MO-Elec",
       "MO-Comp",
+      "MO-Others",
       "Method of Calculation",
       "Overall  % or CGPA",
       "Address-City",
@@ -130,7 +131,8 @@
       "Address-Permanent",
       "Address-Pin code",
       "Address-Communication",
-      "Remarks",
+      "Remark",
+      "Notes",
     ];
     if (expectedformat.length != format.length) return false;
     for (let index = 0; index < expectedformat.length; index++) {
@@ -239,12 +241,14 @@
         phonenumber: ele.studentmobile,
         dob: ele.dob,
         emailid: ele.email,
-        gender: ele.sex,
+        gender: ele.gender,
         nationality: ele.nationality,
         religion: ele.religion,
         mothertongue: ele.mothertongue,
         remarks: ele.remarks,
         stream: ele.stream,
+        remark: ele.remark,
+        notes: ele.notes,
         internal: {
           ...tempdata.internal,
           dateofadmission: ele.dateofadmission,
@@ -260,7 +264,11 @@
           pcmscore: (
             (parseFloat(ele.mochem || "0") +
               parseFloat(ele.mophysics || "0") +
-              parseFloat(ele.momath || "0")) /
+              parseFloat(ele.momath || "0") +
+              parseFloat(ele.mocomp || "0") +
+              parseFloat(ele.moelec || "0") +
+              parseFloat(ele.moothers || "0") +
+              parseFloat(ele.mobio || "0")) /
             3
           ).toFixed(2),
           overallpercentorcgpa: ele.overallorcgpa,
@@ -275,6 +283,7 @@
             electronics: ele.moelec,
             maths: ele.momath,
             physics: ele.mophysics,
+            others: ele.moothers,
           },
         },
         address: {

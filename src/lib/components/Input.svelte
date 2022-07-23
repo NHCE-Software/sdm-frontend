@@ -1,5 +1,6 @@
 <script>
   export let type = "text";
+  export let rows;
   export let header;
   export let value;
   import { addModalOpen, editingModalOpen, editMode } from "../store/store";
@@ -47,8 +48,10 @@
 
     <textarea
       disabled={isDisabled}
+      placeholder={header}
       id={header}
       bind:value
+      rows={rows || 0}
       class=" textarea textarea-bordered w-full flex-1"
       cols="30"
     />

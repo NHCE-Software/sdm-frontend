@@ -1,5 +1,14 @@
 <script>
-  import { editMode, editingModalOpen, nowEditing } from "../store/store";
+  // @ts-nocheck
+
+  import axios from "axios";
+  import swal from "sweetalert";
+  import {
+    editMode,
+    editingModalOpen,
+    nowEditing,
+    baseurl,
+  } from "../store/store";
   import Input from "./Input.svelte";
   import Options from "./Options.svelte";
   export let updateData = (id) => {};
@@ -13,7 +22,11 @@
       let m = parseInt($nowEditing.grade.marks.maths || "0");
       let p = parseInt($nowEditing.grade.marks.physics || "0");
       let c = parseInt($nowEditing.grade.marks.chemistry || "0");
-      temppcmscore = (m + c + p) / 3;
+      let e = parseInt($nowEditing.grade.marks.electronics || "0");
+      let cp = parseInt($nowEditing.grade.marks.computer || "0");
+      let b = parseInt($nowEditing.grade.marks.bio || "0");
+      let o = parseInt($nowEditing.grade.marks.others || "0");
+      temppcmscore = (m + c + p + e + cp + b + o) / 3;
     }
   }
 </script>
@@ -63,6 +76,12 @@
             class={`tab ${mode === "docs" ? "tab-active" : ""}`}
           >
             Documents
+          </div>
+          <div
+            on:click={() => (mode = "remarks")}
+            class={`tab ${mode === "remarks" ? "tab-active" : ""}`}
+          >
+            Remarks
           </div>
         </div>
         <div class="flex gap-3 items-center">
@@ -288,14 +307,15 @@
             header="Electronics"
             bind:value={$nowEditing.grade.marks.electronics}
           />
+          <Input header="Others" bind:value={$nowEditing.grade.marks.others} />
         </div>
 
         <div class="divider mt-5">Calulated score</div>
         <div class="grid grid-cols-2 mt-5 gap-10 ">
           <div>
-            Calculated PCM score is an absolute standardized score for all the
-            students on the platform. This score is calculated by averaging
-            their pcm marks.
+            Calculated score is an absolute standardized score for all the
+            students on the platform. This score calculated by averaging 3 marks
+            (any subject) of the student .
           </div>
           <div
             class="bg-purple-300 text-purple-600  text-center text-3xl  rounded-2xl p-5"
@@ -382,11 +402,81 @@
           </div>
         </div>
       {/if}
+      {#if mode === "remarks"}
+        <div class="py-3">
+          <div class=" gap-3 grid  py-3">
+            <Input header="Remark" bind:value={$nowEditing.remark} />
+            <Input
+              type="area"
+              header="Notes"
+              rows={12}
+              bind:value={$nowEditing.notes}
+            />
+          </div>
+        </div>
+      {/if}
       <button
         disabled={!$editMode}
-        on:click={() => {
+        on:click={async () => {
           // server call
+          console.log($nowEditing);
           updateData($nowEditing.sid);
+
+          const body = {
+            query: `mutation LeadUpdateOne($record: UpdateOneStudentInput!, $filter: FilterUpdateOneStudentInput) {
+                      leadUpdateOne(record: $record, filter: $filter) {
+                        recordId
+                      }
+                    }`,
+
+            variables: {
+              record: {
+                name: $nowEditing.name,
+                stream: $nowEditing.stream,
+                branch: $nowEditing.branch,
+                gender: $nowEditing.gender,
+                dob: $nowEditing.dob,
+                religion: $nowEditing.religion,
+                nationality: $nowEditing.nationality,
+                mothertongue: $nowEditing.mothertongue,
+                caste: $nowEditing.caste,
+                phonenumber: $nowEditing.phonenumber,
+                emailid: $nowEditing.emailid,
+                remark: $nowEditing.remark,
+                notes: $nowEditing.notes,
+                internal: {
+                  dateofadmission: $nowEditing.internal.dateofadmission,
+                  enqno: $nowEditing.internal.enqno,
+                  bsno: $nowEditing.internal.bsno,
+                },
+                relations: [...$nowEditing.relations],
+                grade: {
+                  ...$nowEditing.grade,
+                  marks: { ...$nowEditing.grade.marks },
+                  pcmscore: temppcmscore,
+                },
+                address: { ...$nowEditing.address },
+
+                income: $nowEditing.income,
+                docsdue: $nowEditing.docsdue,
+                docs: [...$nowEditing.docs],
+              },
+              filter: {
+                _id: $nowEditing.sid,
+              },
+            },
+          };
+
+          const res = await axios.post($baseurl, body);
+          console.log(res.data);
+          if (res.data.data.leadUpdateOne.recordId)
+            swal("Update Successful", "Changes have be saved", "success");
+          else
+            swal(
+              "Update Unsuccessful",
+              "Changes have be not been saved",
+              "error"
+            );
         }}
         class="btn mt-auto w-full "
       >
