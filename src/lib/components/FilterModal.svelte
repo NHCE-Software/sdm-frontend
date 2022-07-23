@@ -4,22 +4,23 @@
   import { filterModalOpen } from "../store/store";
   import RangeSlider from "svelte-range-slider-pips";
   import Options from "./Options.svelte";
+  export let filteroptions = {};
   export let fetchdata;
-  export let filters = {
-    docs: {},
-    stream: "",
-    branch: "",
-  };
+  export let filters;
   let pmcscorerangeslider = [0, 100];
-  let streamOptions = ["Why were they open"];
-  let boardOptions = ["Why were they open"];
-  let branchOptions = ["fire"];
+
+  let streamOptions;
+  let boardOptions;
+  let branchOptions;
   let sc1;
   let sc2;
   let sc3;
   let sc4;
   $: {
-    ////console.log(pmcscorerangeslider);
+    console.log(filters);
+    streamOptions = filteroptions.stream || ["Why were they open"];
+    boardOptions = filteroptions.board12 || ["Why were they open"];
+    branchOptions = filteroptions.branch || ["Why were they open"];
     filters.score = {
       ub: Math.max(...pmcscorerangeslider),
       lb: Math.min(...pmcscorerangeslider),
@@ -128,7 +129,6 @@
       <button
         on:click={() => {
           fetchdata("filter");
-
           filterModalOpen.set(false);
         }}
         class="btn">Apply</button

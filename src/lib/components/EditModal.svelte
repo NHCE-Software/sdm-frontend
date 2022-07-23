@@ -27,6 +27,7 @@
       let b = parseInt($nowEditing.grade.marks.bio || "0");
       let o = parseInt($nowEditing.grade.marks.others || "0");
       temppcmscore = (m + c + p + e + cp + b + o) / 3;
+      $nowEditing.grade.pcmscore = temppcmscore;
     }
   }
 </script>

@@ -18,7 +18,8 @@
   import axios from "axios";
 
   async function fetchdata(mode) {
-    if (mode === "filter") {
+    console.log("Fetching", $currentPage, $maxPage);
+    if (mode === "filter" || mode === "search") {
       // do not check for pages as the pages will change after applying filter
       // setting the page to 1st page
       $currentPage = 1;
@@ -29,11 +30,12 @@
         return;
       }
 
-      if ($currentPage >= $maxPage) {
+      if ($currentPage > $maxPage) {
         $currentPage = $maxPage;
         return;
       }
     }
+
     loading = true;
     //console.log($currentPage, $maxRecordPerPage);
 
@@ -41,21 +43,26 @@
       // $and: [],
     };
     let and = [];
+
     for (const dd of Object.keys(filters.docs)) {
-      console.log(dd);
+      //console.log(dd);
       and.push({
         "docs.docname":
           filters.docs[dd] === "Submitted" ? { $eq: dd } : { $ne: dd },
       });
     }
+
     if (and.length !== 0) newfilter["$and"] = and;
     newfilter["grade.pcmscore"] = {
       $gte: filters.score.lb,
       $lte: filters.score.ub,
     };
+    console.log(filters);
     if (filters.board12) newfilter["grade.board12"] = filters.board12;
-    if (filters.branch) newfilter["branch"] = filters.stream;
-    if (filters.stream) newfilter["stream"] = filters.branch;
+    if (filters.branch) newfilter["branch"] = filters.branch;
+    if (filters.stream) newfilter["stream"] = filters.stream;
+    if (search) newfilter["name"] = { $regex: search, $options: "i" };
+
     console.log("NEWFILTER  : ", newfilter);
     const body = {
       query: `query Query($record: JSON) {
@@ -85,92 +92,24 @@
     await fetchdata();
   });
 
-  let data = [
-    {
-      sid: "1",
-      name: "Sachin",
-      stream: "Prof",
-      branch: "Mech",
-      gender: "sigmamail",
-      dob: "2000-07-04",
-      religion: "Hindu",
-      nationality: "Indian",
-      mothertongue: "Hindi",
-      caste: "Caste",
-      phonenumber: "9191919191",
-      emailid: "sachin@gmail.com",
-      remarks: "",
-      internal: {
-        bsno: "69",
-        enqno: "69",
-        dateofadmission: "2000-07-04",
-      },
-      income: "3000",
-      relations: [
-        {
-          relationType: "Father",
-          name: "SachinFather",
-          phonenumber: "9191919191",
-          occupation: "Software Engineer",
-          landline: "9191919191",
-        },
-      ],
-      address: {
-        city: "Pune",
-        state: "Maharashtra",
-        country: "India",
-        pincode: "411028",
-        permanentAddress: "asdfasd",
-        communicationAddress: "asdfasd",
-      },
-      grade: {
-        collName12: "RV collez",
-        board12: "CBSE",
-        state12: "Bangalore",
-        yearofpassing12: "2020",
-        pcmscore: 80.0, // CALCULATE
-        modeofcal: "Percentage",
-        overallpercentorcgpa: "80",
-        regno: "12345",
-        qualipassed: "",
-        marks: {
-          maths: "80",
-          physics: "80",
-          chemistry: "80",
-          electronics: "80",
-          computer: "80",
-          bio: "80",
-        },
-      },
-
-      docsdue: "", // TODO
-      docs: [
-        {
-          docname: "Others",
-          docothername: "Admission Form",
-          //doclink: "http://www.africau.edu/images/default/sample.pdf",
-        },
-        {
-          docname: "MIG",
-          docothername: "othername",
-          //doclink: "http://www.africau.edu/images/default/sample.pdf",
-        },
-      ],
-    },
-  ];
+  let data = [];
+  let search;
   let loading = false;
   let filters = { docs: {}, stream: "", branch: "" };
   let datapoints = 0;
+  let filteroptions = {};
   let updateData = (sid) => {
     data = data.map((item) => {
       if (item.sid === sid) return $nowEditing;
       else return item;
     });
+
     data = [...data];
+    //console.log(data);
   };
 </script>
 
-<FilterModal bind:filters {fetchdata} />
+<FilterModal bind:filters {fetchdata} bind:filteroptions />
 <AddModal />
 <EditModal {updateData} />
 <section>
@@ -181,11 +120,18 @@
     <div class="form-control ml-auto ">
       <div class="input-group">
         <input
+          bind:value={search}
           type="text"
           placeholder="Search…"
           class="input input-bordered "
         />
-        <button class="btn btn-square">
+        <button
+          on:click={async () => {
+            //console.log(search);
+            await fetchdata("search");
+          }}
+          class="btn btn-square"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6"
@@ -245,7 +191,15 @@
             </svg>
           </div>
           <div
-            on:click={() => {
+            on:click={async () => {
+              const body = {
+                query: `query Query {
+                          distinctValues
+                        }`,
+              };
+              const { data } = await axios.post($baseurl, body);
+              //console.log("bru", data);
+              if (data) filteroptions = data.data.distinctValues;
               filterModalOpen.set(true);
             }}
             data-tip="Filter"
@@ -350,7 +304,7 @@
         <div class="animate-pulse">Fetching data please wait...</div>
       </div>
     {:else}
-      <Table {data} />
+      <Table bind:data />
     {/if}
   </div>
 </section>

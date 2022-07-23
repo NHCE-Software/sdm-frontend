@@ -3,11 +3,6 @@
 
   import { editingModalOpen, nowEditing, selectedIDs } from "../store/store";
   export let data = [];
-  $: {
-    if ($nowEditing) {
-      //console.log($nowEditing);
-    }
-  }
 </script>
 
 <table class="w-full  border-separate">
@@ -28,7 +23,13 @@
   </tr>
 
   {#each data as student}
-    <tr>
+    <tr
+      class={`${
+        student.grade.pcmscore && student.grade.pcmscore < 45
+          ? "bg-red-100"
+          : ""
+      }`}
+    >
       <td class="border p-3 w-[10px]">
         <div class="flex items-center justify-center">
           <input
@@ -66,7 +67,7 @@
         {student.docs.find((item) => item.docname === "12th") ? "✅" : "❌"}
       </td>
 
-      <td class="border p-3 w-[10px]">{student.grade.pcmscore}</td>
+      <td class="border p-3 w-[10px]">{student.grade.pcmscore.toFixed(2)}</td>
       <td class="border p-3 w-[10px]">
         {student.docs.find((item) => item.docname === "TC") ? "✅" : "❌"}
       </td>
