@@ -19,6 +19,7 @@
     //console.log(data.data);
     if (data.data.signIn.token) {
       localStorage.setItem("token", data.data.signIn.token);
+      window.location.href = "/#/studentdetails2";
     } else {
       swal(
         "Authentication Error",

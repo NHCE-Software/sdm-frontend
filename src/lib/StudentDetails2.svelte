@@ -1,4 +1,6 @@
 <script>
+  import Pagination from "./components/Pagination.svelte";
+
   import Table from "./components/Table.svelte";
   import loadinggif from "../assets/loading.gif";
   import Navbar from "./components/Navbar.svelte";
@@ -16,6 +18,7 @@
   import FilterModal from "./components/FilterModal.svelte";
   import { onMount } from "svelte";
   import axios from "axios";
+  import Options from "./components/Options.svelte";
 
   async function fetchdata(mode) {
     console.log("Fetching", $currentPage, $maxPage);
@@ -61,7 +64,7 @@
     if (filters.board12) newfilter["grade.board12"] = filters.board12;
     if (filters.branch) newfilter["branch"] = filters.branch;
     if (filters.stream) newfilter["stream"] = filters.stream;
-    if (search) newfilter["name"] = { $regex: search, $options: "i" };
+    if (search) newfilter[searchCategory] = { $regex: search, $options: "i" };
 
     console.log("NEWFILTER  : ", newfilter);
     const body = {
@@ -98,6 +101,7 @@
   let filters = { docs: {}, stream: "", branch: "" };
   let datapoints = 0;
   let filteroptions = {};
+  let searchCategory = "name";
   let updateData = (sid) => {
     data = data.map((item) => {
       if (item.sid === sid) return $nowEditing;
@@ -110,7 +114,7 @@
 </script>
 
 <FilterModal bind:filters {fetchdata} bind:filteroptions />
-<AddModal />
+<AddModal {fetchdata} />
 <EditModal {updateData} />
 <section>
   <Navbar />
@@ -118,35 +122,40 @@
     <div class="text-2xl font-bold">Student Details</div>
 
     <div class="form-control ml-auto ">
-      <div class="input-group">
-        <input
-          bind:value={search}
-          type="text"
-          placeholder="Search…"
-          class="input input-bordered "
-        />
-        <button
-          on:click={async () => {
-            //console.log(search);
-            await fetchdata("search");
-          }}
-          class="btn btn-square"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            /></svg
-          >
-        </button>
-      </div>
+      <form
+        on:submit|preventDefault={async () => {
+          await fetchdata("search");
+        }}
+      >
+        <div class="input-group">
+          <select bind:value={searchCategory} class="select select-bordered">
+            <option value="name">Name</option>
+            <option value="phonenumber">Ph no</option>
+            <option value="relations.name">Relation</option>
+          </select>
+          <input
+            bind:value={search}
+            type="text"
+            placeholder="Search…"
+            class="input input-bordered "
+          />
+          <button type="submit" class="btn btn-square">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              /></svg
+            >
+          </button>
+        </div>
+      </form>
     </div>
 
     <div>
@@ -249,47 +258,7 @@
   </div>
 
   <div class="p-5 ">
-    <div class="flex text-sm items-center justify-between py-3">
-      <div class="flex gap-3">
-        <form class="flex gap-4 items-center">
-          <div class="form-control">
-            <label class="input-group input-group-sm">
-              <div
-                on:click={() => {
-                  $currentPage -= 1;
-                  fetchdata();
-                }}
-                class="btn btn-sm"
-              >
-                -
-              </div>
-              <input
-                bind:value={$currentPage}
-                type="text"
-                class="input input-bordered w-20 text-center  input-sm "
-              />
-              <div
-                on:click={() => {
-                  $currentPage += 1;
-                  fetchdata();
-                }}
-                class="btn btn-sm"
-              >
-                +
-              </div>
-            </label>
-          </div>
-          <div class="text-sm opacity-40">
-            Page {$currentPage} ({$maxRecordPerPage} records) of {$maxPage} pages
-          </div>
-        </form>
-      </div>
-      <div class="flex gap-3">
-        <div class="text-sm opacity-40">
-          Displaying <b>{data.length}</b> of Total <b>{datapoints}</b> data points
-        </div>
-      </div>
-    </div>
+    <Pagination {fetchdata} {datapoints} dis={data.length} />
     {#if loading}
       <div
         class="flex animate-bounce flex-col gap-5 justify-center items-center w-full h-96"
@@ -306,5 +275,6 @@
     {:else}
       <Table bind:data />
     {/if}
+    <Pagination {fetchdata} {datapoints} dis={data.length} />
   </div>
 </section>

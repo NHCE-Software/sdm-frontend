@@ -470,9 +470,10 @@
 
           const res = await axios.post($baseurl, body);
           console.log(res.data);
-          if (res.data.data.leadUpdateOne.recordId)
+          if (res.data.data.leadUpdateOne.recordId) {
             swal("Update Successful", "Changes have be saved", "success");
-          else
+            editingModalOpen.set(false);
+          } else
             swal(
               "Update Unsuccessful",
               "Changes have be not been saved",

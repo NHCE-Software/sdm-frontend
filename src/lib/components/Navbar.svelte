@@ -23,8 +23,8 @@
         tabindex="0"
         class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
       >
-        <li><a>Student Details</a></li>
-        <li><a>Load Details</a></li>
+        <li><a href="/#/studentdetails2">Student Details</a></li>
+        <li><a href="/#/loadstudents">Load Details</a></li>
         <li><a>Logout</a></li>
       </ul>
     </div>

@@ -7,6 +7,7 @@
   import Input from "./Input.svelte";
   import Options from "./Options.svelte";
   let newData;
+  export let fetchdata = () => {};
   function reinitnewdata() {
     newData = {
       name: "",
@@ -456,6 +457,7 @@
             );
 
           reinitnewdata();
+          fetchdata();
           addModalOpen.set(false);
         }}
         class="btn mt-auto w-full "

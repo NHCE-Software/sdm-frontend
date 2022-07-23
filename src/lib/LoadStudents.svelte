@@ -335,7 +335,14 @@
       },
     };
 
-    await axios.post($baseurl, body);
+    const { data } = await axios.post($baseurl, body);
+    console.log(data);
+    if (data.data.addStudents) {
+      swal("Loaded data", "Changes were saved", "success");
+      window.location.href = "/#/studentdetails2";
+    } else {
+      swal("Something Went Wrong", "Please try again", "error");
+    }
   }
 
   $: {
