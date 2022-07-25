@@ -78,9 +78,10 @@
       <td class="border p-3 max-w-[20px]"
         >{[
           `${student.phonenumber}(Student) `,
-          ...student.relations.map(
-            (item) => `${item.phonenumber}(${item.relationType}) `
-          ),
+          ...student.relations.map((item) => {
+            if (item && item.phonenumber)
+              return `${item.phonenumber}(${item.relationType})`;
+          }),
         ]}</td
       >
       <td class="border p-3 w-[10px]">{student.gender}</td>

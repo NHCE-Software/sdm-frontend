@@ -24,6 +24,8 @@
     "daisyui": "^2.15.2",
     "danfojs": "^1.1.1",
     "dayjs": "^1.11.3",
+    "exceljs": "^4.3.0",
+    "file-saver": "^2.0.5",
     "gridjs": "^5.0.2",
     "gridjs-svelte": "^2.1.1",
     "read-excel-file": "^5.3.5",

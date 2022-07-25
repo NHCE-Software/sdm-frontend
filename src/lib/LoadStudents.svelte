@@ -81,6 +81,7 @@
   function checkFormat(format) {
     let expectedformat = [
       "BS#",
+      "Score",
       "Branch",
       "Enq. No",
       "Date of admission",
@@ -102,9 +103,9 @@
       "Mothers mobile",
       "Mothers landline",
       "Total Income",
-      "Name of the Local Gaurdian",
-      "Gaurdian Mobile",
-      "Gaurdian Landline",
+      "Name of the Local Guardian",
+      "Guardian Mobile",
+      "Guardian Landline",
       "12th College Name",
       "12th College State",
       "12th College Board",
@@ -134,9 +135,12 @@
       "Remark",
       "Notes",
     ];
+    format = format.map((item) => sanitize(item));
     if (expectedformat.length != format.length) return false;
+
     for (let index = 0; index < expectedformat.length; index++) {
-      if (!format.includes(expectedformat[index])) return false;
+      if (!format.includes(sanitize(expectedformat[index]))) return false;
+      console.log("Passed", expectedformat[index]);
     }
 
     return true;
@@ -164,7 +168,6 @@
     loading.parsingCSV = true;
     try {
       let data = await readXlsxFile(files[0], { dateFormat: "mm/dd/yyyy" });
-
       //console.log(data);
       parsedData.columns = data[1];
       parsedData.data = data.slice(2);
@@ -261,16 +264,6 @@
           collName12: ele["12thcollegename"],
           state12: ele["12thcollegestate"],
           modeofcal: ele.methodofcalculation,
-          pcmscore: (
-            (parseFloat(ele.mochem || "0") +
-              parseFloat(ele.mophysics || "0") +
-              parseFloat(ele.momath || "0") +
-              parseFloat(ele.mocomp || "0") +
-              parseFloat(ele.moelec || "0") +
-              parseFloat(ele.moothers || "0") +
-              parseFloat(ele.mobio || "0")) /
-            3
-          ).toFixed(2),
           overallpercentorcgpa: ele.overallorcgpa,
           yearofpassing12: ele.yrofpassing,
           regno: ele.regno,
@@ -314,10 +307,10 @@
           },
           {
             relationType: "Guardian",
-            name: ele.nameofthelocalgaurdian,
-            landline: ele.gaurdianlandline,
+            name: ele.nameofthelocalguardian,
+            landline: ele.guardianlandline,
             occupation: "",
-            phonenumber: ele.gaurdianmobile,
+            phonenumber: ele.guardianmobile,
           },
         ],
       };

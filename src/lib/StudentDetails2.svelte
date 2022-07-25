@@ -1,9 +1,12 @@
 <script>
-  import Pagination from "./components/Pagination.svelte";
+  // @ts-nocheck
 
+  import Pagination from "./components/Pagination.svelte";
+  import exceljs from "exceljs";
   import Table from "./components/Table.svelte";
   import loadinggif from "../assets/loading.gif";
   import Navbar from "./components/Navbar.svelte";
+  import { saveAs } from "file-saver";
   import {
     addModalOpen,
     currentPage,
@@ -18,8 +21,11 @@
   import FilterModal from "./components/FilterModal.svelte";
   import { onMount } from "svelte";
   import axios from "axios";
-  import Options from "./components/Options.svelte";
-
+  import swal from "sweetalert";
+  import schema from "./helpers/exportschema";
+  function sanitize(str) {
+    return str.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  }
   async function fetchdata(mode) {
     console.log("Fetching", $currentPage, $maxPage);
     if (mode === "filter" || mode === "search") {
@@ -111,6 +117,243 @@
     data = [...data];
     //console.log(data);
   };
+  async function downloadXLSX() {
+    swal(
+      "This is going to take sometime",
+      "Please wait till we fetch all the data. The download will start automatically"
+    );
+    const body = {
+      query: `query LeadMany {
+          leadMany {
+            name
+            stream
+            branch
+            gender
+            dob
+            religion
+            nationality
+            mothertongue
+            caste
+            phonenumber
+            emailid
+            remark
+            notes
+
+            income
+            docsdue
+
+            _id
+            updatedAt
+            createdAt
+            internal {
+              enqno
+            dateofadmission
+              bsno
+            }
+            relations {
+              relationType
+              name
+              phonenumber
+              occupation
+              landline
+              _id
+            }
+            address {
+              city
+              state
+              country
+              pincode
+              permanentAddress
+              communicationAddress
+            }
+            grade {
+              collName12
+              board12
+              state12
+              yearofpassing12
+              pcmscore
+              modeofcal
+              overallpercentorcgpa
+              regno
+              qualipassed
+              marks {
+                maths
+                physics
+                chemistry
+                electronics
+                computer
+                bio
+                others
+              }
+            }
+            docs {
+              docname
+              docothername
+              _id
+            }
+            createdByUser {
+              name
+              email
+              password
+              _id
+            }
+          }
+        }`,
+    };
+    const res = await axios.post($baseurl, body);
+    let resdata = res.data.data.leadMany || [];
+    let fin = [];
+    for (let index = 0; index < resdata.length; index++) {
+      const element = resdata[index];
+      let f = {};
+      for (let i of schema) {
+        f[i.column] = i.value(element);
+      }
+      fin.push(f);
+    }
+    console.log(fin);
+    const workbook = new exceljs.Workbook();
+    const sheet = workbook.addWorksheet("main");
+    const worksheet = workbook.getWorksheet("main");
+    // adding all headers
+    worksheet.addRow([
+      "Internal data",
+      "",
+      "",
+      "Student Info",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "Relations",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "Academics Detail",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "Documents Submission",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "Marks Details",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "Address Details",
+      "",
+      "",
+      "",
+      "",
+    ]);
+    worksheet.mergeCells(`A1:C1`);
+    worksheet.mergeCells(`D1:N1`);
+    worksheet.mergeCells(`O1:Y1`);
+    worksheet.mergeCells(`Z1:AE1`);
+    worksheet.mergeCells(`AF1:AK1`);
+    worksheet.mergeCells(`AL1:AU1`);
+    worksheet.mergeCells(`AV1:AZ1`);
+
+    worksheet.addRow(Object.keys(fin[0]));
+
+    //adding all values
+    for (let index = 0; index < fin.length; index++) {
+      let row = Object.values(fin[index]);
+      // row[0] = sanitize(row[0]);
+      worksheet.addRow(row);
+    }
+
+    // adding validation
+    for (let index = 3; index < 10000; index++) {
+      worksheet.getCell(`AF${index}`).dataValidation = {
+        type: "list",
+        allowBlank: true,
+        error: "Choose from the dropdown value only",
+        showErrorMessage: true,
+        prompt: "Use dropdown",
+        formulae: ['"Submitted,Not Submitted"'],
+      };
+      worksheet.getCell(`AG${index}`).dataValidation = {
+        type: "list",
+        allowBlank: true,
+        error: "Choose from the dropdown value only",
+        showErrorMessage: true,
+        prompt: "Use dropdown",
+        formulae: ['"Submitted,Not Submitted"'],
+      };
+      worksheet.getCell(`AH${index}`).dataValidation = {
+        type: "list",
+        allowBlank: true,
+        error: "Choose from the dropdown value only",
+        showErrorMessage: true,
+        prompt: "Use dropdown",
+        formulae: ['"Submitted,Not Submitted"'],
+      };
+      worksheet.getCell(`AI${index}`).dataValidation = {
+        type: "list",
+        allowBlank: true,
+        error: "Choose from the dropdown value only",
+        showErrorMessage: true,
+        prompt: "Use dropdown",
+        formulae: ['"Submitted,Not Submitted"'],
+      };
+      worksheet.getCell(`AS${index}`).dataValidation = {
+        type: "list",
+        allowBlank: true,
+        error: "Choose from the dropdown value only",
+        showErrorMessage: true,
+        prompt: "Use dropdown",
+        formulae: ['"Percentage,CGPA"'],
+      };
+      worksheet.getCell(`E${index}`).dataValidation = {
+        type: "list",
+        allowBlank: true,
+        error: "Choose from the dropdown value only",
+        showErrorMessage: true,
+        prompt: "Use dropdown",
+        formulae: ['"Male,Female"'],
+      };
+      worksheet.getCell(`F${index}`).dataValidation = {
+        type: "list",
+        allowBlank: true,
+        error: "Choose from the dropdown value only",
+        showErrorMessage: true,
+        prompt: "Use dropdown",
+        formulae: ['"Professional,Global"'],
+      };
+    }
+
+    workbook.xlsx.writeBuffer().then(function (buffer) {
+      // done
+      console.log(buffer);
+
+      const blob = new Blob([buffer], { type: "applicationi/xlsx" });
+      saveAs(blob, "sdmdata.xlsx");
+    });
+  }
 </script>
 
 <FilterModal bind:filters {fetchdata} bind:filteroptions />
@@ -162,6 +405,7 @@
       <div class="flex flex-col gap-1 mx-6">
         <div class="flex gap-3">
           <div
+            on:click={downloadXLSX}
             data-tip="Download All Data"
             class="tooltip tooltip-bottom bg-purple-200 rounded-full text-purple-500 p-3 text-center btn outline-none border-none hover:text-white"
           >
